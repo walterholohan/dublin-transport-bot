@@ -211,6 +211,7 @@ app.get('/webhook/', (req, res) => {
 app.post('/webhook/', (req, res) => {
     try {
         var data = JSONbig.parse(req.body);
+        console.log("webhook body data:" + data);
 
         if (data.entry) {
             let entries = data.entry;
