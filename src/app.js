@@ -51,7 +51,17 @@ function processEvent(event) {
                         }
                     } else {
                         async.eachSeries(responseData.facebook, (facebookMessage, callback) => {
-                            sendFBMessage(sender, facebookMessage, callback);
+                            try {
+                                if (facebookMessage.sender_action) {
+                                    console.log('Response as sender action');
+                                    sendFBSenderAction(sender, facebookMessage.sender_action, callback);
+                                } else {
+                                    console.log('Response as formatted message');
+                                    sendFBMessage(sender, facebookMessage, callback);
+                                }
+                            } catch (err) {
+                                sendFBMessage(sender, { text: err.message });
+                            }
                         });
                     }
                 } else if (isDefined(responseText)) {
