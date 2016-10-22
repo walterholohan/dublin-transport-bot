@@ -14,7 +14,7 @@ const APIAI_LANG = process.env.APIAI_LANG || 'en';
 const FB_VERIFY_TOKEN = process.env.FB_VERIFY_TOKEN;
 const FB_PAGE_ACCESS_TOKEN = process.env.FB_PAGE_ACCESS_TOKEN;
 
-const apiAiService = apiai(APIAI_ACCESS_TOKEN, {language: APIAI_LANG, requestSource: "fb"});
+const apiAiService = apiai(APIAI_ACCESS_TOKEN, { language: APIAI_LANG, requestSource: "fb" });
 const sessionIds = new Map();
 
 function processEvent(event) {
@@ -31,10 +31,9 @@ function processEvent(event) {
 
         console.log("Text", text);
 
-        let apiaiRequest = apiAiService.textRequest(text,
-            {
-                sessionId: sessionIds.get(sender)
-            });
+        let apiaiRequest = apiAiService.textRequest(text, {
+            sessionId: sessionIds.get(sender)
+        });
 
         apiaiRequest.on('response', (response) => {
             if (isDefined(response.result)) {
@@ -48,22 +47,11 @@ function processEvent(event) {
                             console.log('Response as formatted message');
                             sendFBMessage(sender, responseData.facebook);
                         } catch (err) {
-                            sendFBMessage(sender, {text: err.message});
+                            sendFBMessage(sender, { text: err.message });
                         }
                     } else {
-                        responseData.facebook.forEach((facebookMessage) => {
-                            try {
-                                if (facebookMessage.sender_action) {
-                                    console.log('Response as sender action');
-                                    sendFBSenderAction(sender, facebookMessage.sender_action);
-                                }
-                                else {
-                                    console.log('Response as formatted message');
-                                    sendFBMessage(sender, facebookMessage);
-                                }
-                            } catch (err) {
-                                sendFBMessage(sender, {text: err.message});
-                            }
+                        async.eachSeries(responseData.facebook, (facebookMessage, callback) => {
+                            sendFBMessage(sender, facebookMessage, callback);
                         });
                     }
                 } else if (isDefined(responseText)) {
@@ -73,7 +61,7 @@ function processEvent(event) {
                     var splittedText = splitResponse(responseText);
 
                     async.eachSeries(splittedText, (textPart, callback) => {
-                        sendFBMessage(sender, {text: textPart}, callback);
+                        sendFBMessage(sender, { text: textPart }, callback);
                     });
                 }
 
@@ -94,7 +82,8 @@ function splitResponse(str) {
 }
 
 function chunkString(s, len) {
-    var curr = len, prev = 0;
+    var curr = len,
+        prev = 0;
 
     var output = [];
 
@@ -103,8 +92,7 @@ function chunkString(s, len) {
             output.push(s.substring(prev, curr));
             prev = curr;
             curr += len;
-        }
-        else {
+        } else {
             var currReverse = curr;
             do {
                 if (s.substring(currReverse - 1, currReverse) == ' ') {
@@ -124,10 +112,10 @@ function chunkString(s, len) {
 function sendFBMessage(sender, messageData, callback) {
     request({
         url: 'https://graph.facebook.com/v2.6/me/messages',
-        qs: {access_token: FB_PAGE_ACCESS_TOKEN},
+        qs: { access_token: FB_PAGE_ACCESS_TOKEN },
         method: 'POST',
         json: {
-            recipient: {id: sender},
+            recipient: { id: sender },
             message: messageData
         }
     }, (error, response, body) => {
@@ -147,10 +135,10 @@ function sendFBSenderAction(sender, action, callback) {
     setTimeout(() => {
         request({
             url: 'https://graph.facebook.com/v2.6/me/messages',
-            qs: {access_token: FB_PAGE_ACCESS_TOKEN},
+            qs: { access_token: FB_PAGE_ACCESS_TOKEN },
             method: 'POST',
             json: {
-                recipient: {id: sender},
+                recipient: { id: sender },
                 sender_action: action
             }
         }, (error, response, body) => {
@@ -194,7 +182,7 @@ function isDefined(obj) {
 
 const app = express();
 
-app.use(bodyParser.text({type: 'application/json'}));
+app.use(bodyParser.text({ type: 'application/json' }));
 
 app.get('/webhook/', (req, res) => {
     if (req.query['hub.verify_token'] == FB_VERIFY_TOKEN) {
