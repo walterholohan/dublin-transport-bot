@@ -194,6 +194,7 @@ function isDefined(obj) {
 const app = express();
 
 app.use(bodyParser.text({type: 'application/json'}));
+app.use(express.static('/client'));
 
 app.get('/webhook/', (req, res) => {
     if (req.query['hub.verify_token'] == FB_VERIFY_TOKEN) {
