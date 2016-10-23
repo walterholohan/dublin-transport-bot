@@ -255,7 +255,7 @@ app.post('/billpayed', (req, res) => {
         "attachment": {
             "type": "image",
             "payload": {
-                "url": "http://cdn.c.photoshelter.com/img-get/I0000AnnFYWsU3Uo/s/750/750/Reenard-GAA-014.jpg"
+                "url": "https://esbbot.prototypon.io/receipt.png"
             }
         }
     }
