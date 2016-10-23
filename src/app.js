@@ -245,8 +245,9 @@ app.post('/webhook/', (req, res) => {
 });
 
 app.post('/billpayed', (req, res) => {
-    console.log(req.body);
-    sendFBMessage(req.body.id, { text: "Payment complete!" });
+    var body = JSON.parse(req.body);
+    console.log(body);
+    sendFBMessage(body.id, { text: "Payment complete!" });
 });
 
 app.listen(REST_PORT, () => {
