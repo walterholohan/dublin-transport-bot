@@ -193,6 +193,12 @@ function isDefined(obj) {
 const app = express();
 
 app.use(bodyParser.text({ type: 'application/json' }));
+app.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+});
+
 
 app.get('/webhook/', (req, res) => {
     if (req.query['hub.verify_token'] == FB_VERIFY_TOKEN) {
@@ -239,7 +245,6 @@ app.post('/webhook/', (req, res) => {
 });
 
 app.post('/billpayed', (req, res) => {
-    console.log(req);
     sendFBMessage(req.body.id, { text: "Payment complete!" });
 });
 
