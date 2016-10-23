@@ -246,8 +246,40 @@ app.post('/webhook/', (req, res) => {
 
 app.post('/billpayed', (req, res) => {
     var body = JSON.parse(req.body);
-    console.log(body);
-    sendFBMessage(body.id, { text: "Payment complete!" });
+
+    let text = {
+        "text": "Payment complete!"
+    }
+
+    let image = {
+        "attachment": {
+            "type": "image",
+            "payload": {
+                "url": "http://cdn.c.photoshelter.com/img-get/I0000AnnFYWsU3Uo/s/750/750/Reenard-GAA-014.jpg"
+            }
+        }
+    }
+
+    let quickreplys = {
+        "text": "Would you like to set a savings goal?",
+        "quick_replies": [{
+            "content_type": "text",
+            "title": "Set Savings Goal",
+            "payload": "DAILY"
+        }]
+    }
+
+    let messages = [text, images, quickreplys];
+
+    async.eachSeries(messages, (facebookMessage, callback) => {
+        try {
+            console.log('Response as formatted message');
+            sendFBMessage(body.id, facebookMessage, callback);
+        } catch (err) {
+            sendFBMessage(sender, { text: err.message });
+        }
+    });
+
 });
 
 app.listen(REST_PORT, () => {
