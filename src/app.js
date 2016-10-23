@@ -269,7 +269,7 @@ app.post('/billpayed', (req, res) => {
         }]
     }
 
-    let messages = [text, images, quickreplys];
+    let messages = [text, image, quickreplys];
 
     async.eachSeries(messages, (facebookMessage, callback) => {
         try {
