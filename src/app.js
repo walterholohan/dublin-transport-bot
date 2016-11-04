@@ -1,5 +1,4 @@
 'use strict';
-import fetch from 'node-fetch';
 
 const apiai = require('apiai');
 const express = require('express');
@@ -8,6 +7,7 @@ const uuid = require('node-uuid');
 const request = require('request');
 const JSONbig = require('json-bigint');
 const async = require('async');
+const fetch = require ('node-fetch');
 
 const REST_PORT = (process.env.PORT || 5000);
 const APIAI_ACCESS_TOKEN = process.env.APIAI_ACCESS_TOKEN;
