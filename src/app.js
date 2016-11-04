@@ -246,6 +246,8 @@ app.post('/webhook/', (req, res) => {
 
 app.post('/billpayed', (req, res) => {
     var body = JSON.parse(req.body);
+    console.log("body" + body);
+    console.log("entry" + entry);
 
     let text = {
         "text": "Payment complete!"
