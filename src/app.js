@@ -285,7 +285,9 @@ app.post('/nextluas', (req, res) => {
 
 function getNextLuas() {
     return fetch('http://luasforecasts.rpa.ie/xml/get.ashx?action=forecast&stop=ran&encrypt=false')
-        .then(res => res.body());
+        .then(function(res) {
+            return res.text();
+        });
 }
 
 app.listen(REST_PORT, () => {
