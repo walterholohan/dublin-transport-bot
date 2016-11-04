@@ -217,6 +217,7 @@ app.post('/webhook/', (req, res) => {
         var data = JSONbig.parse(req.body);
         console.log("webhook body data:" + data);
 
+
         if (data.entry) {
             let entries = data.entry;
             entries.forEach((entry) => {
@@ -246,8 +247,7 @@ app.post('/webhook/', (req, res) => {
 
 app.post('/billpayed', (req, res) => {
     var body = JSON.parse(req.body);
-    console.log("body" + body);
-    console.log("entry" + entry);
+    console.log("webhook body data:" + data.result);
 
     let text = {
         "text": "Payment complete!"
@@ -273,14 +273,14 @@ app.post('/billpayed', (req, res) => {
 
     let messages = [text, image, quickreplys];
 
-    async.eachSeries(messages, (facebookMessage, callback) => {
-        try {
-            console.log('Response as formatted message');
-            sendFBMessage(body.id, facebookMessage, callback);
-        } catch (err) {
-            sendFBMessage(sender, { text: err.message });
-        }
-    });
+    // async.eachSeries(messages, (facebookMessage, callback) => {
+    //     try {
+    //         console.log('Response as formatted message');
+    //         sendFBMessage(body.id, facebookMessage, callback);
+    //     } catch (err) {
+    //         sendFBMessage(sender, { text: err.message });
+    //     }
+    // });
 
 });
 
