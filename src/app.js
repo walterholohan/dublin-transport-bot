@@ -1,4 +1,5 @@
 'use strict';
+import fetch from 'node-fetch';
 
 const apiai = require('apiai');
 const express = require('express');
@@ -247,7 +248,7 @@ app.post('/webhook/', (req, res) => {
 
 app.post('/nextluas', (req, res) => {
     var body = JSON.parse(req.body);
-    
+
     console.log("webhook next luas data:" + body.result.action);
 
     let text = {
@@ -272,13 +273,20 @@ app.post('/nextluas', (req, res) => {
         }]
     }
 
-    return res.json({
-        speech: 'Hook is working!',
-        displayText: 'Hook is working!',
-        data: { "facebook": text}
-   });
-
+    getNextLuas().then(body => {
+        console.log(body);
+        return res.json({
+            speech: 'Hook is working!',
+            displayText: 'Hook is working!',
+            data: { "facebook": text}
+        });
+    });
 });
+
+function getNextLuas() {
+    return fetch('http://luasforecasts.rpa.ie/xml/get.ashx?action=forecast&stop=ran&encrypt=false')
+        .then(res => res.body());
+}
 
 app.listen(REST_PORT, () => {
     console.log('Rest service ready on port ' + REST_PORT);
