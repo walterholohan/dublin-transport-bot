@@ -247,7 +247,8 @@ app.post('/webhook/', (req, res) => {
 
 app.post('/nextluas', (req, res) => {
     var body = JSON.parse(req.body);
-    console.log("webhook next luas data:" + body.result);
+    
+    console.log("webhook next luas data:" + body.result.action);
 
     let text = {
         "text": "Payment complete!"
@@ -271,16 +272,11 @@ app.post('/nextluas', (req, res) => {
         }]
     }
 
-    let messages = [text, image, quickreplys];
-
-    // async.eachSeries(messages, (facebookMessage, callback) => {
-    //     try {
-    //         console.log('Response as formatted message');
-    //         sendFBMessage(body.id, facebookMessage, callback);
-    //     } catch (err) {
-    //         sendFBMessage(sender, { text: err.message });
-    //     }
-    // });
+    return res.json({
+        speech: 'Hook is working!',
+        displayText: 'Hook is working!',
+        data: { "facebook": text}
+   });
 
 });
 
