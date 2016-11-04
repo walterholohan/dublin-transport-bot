@@ -245,9 +245,9 @@ app.post('/webhook/', (req, res) => {
 
 });
 
-app.post('/billpayed', (req, res) => {
+app.post('/nextluas', (req, res) => {
     var body = JSON.parse(req.body);
-    console.log("webhook body data:" + data.result);
+    console.log("webhook next luas data:" + body.result);
 
     let text = {
         "text": "Payment complete!"
