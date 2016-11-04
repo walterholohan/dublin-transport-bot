@@ -1,4 +1,4 @@
-# api-ai-facebook
+# dublin-transport-bot
 Facebook bot sources for Api.ai integration
 
 ## Deploy with Heroku
