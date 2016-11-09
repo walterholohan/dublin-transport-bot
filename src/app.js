@@ -279,7 +279,8 @@ app.post('/nextluas', (req, res) => {
         parseString(body, function (err, result) {
             let text = {
                 "text": result.stopInfo.direction[0].tram[0].$.dueMins + "mins, Direction: " +
-                result.stopInfo.direction[0].tram[0].$.destination
+                result.stopInfo.direction[0].tram[0].$.destination + "<br/>" + result.stopInfo.direction[1].tram[0].$.dueMins + "mins, Direction: " +
+                result.stopInfo.direction[1].tram[0].$.destination
             }
             return res.json({
                 speech: 'Hook is working!',
