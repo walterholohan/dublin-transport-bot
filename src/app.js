@@ -248,33 +248,12 @@ app.post('/webhook/', (req, res) => {
 });
 
 app.post('/nextluas', (req, res) => {
-    //var body = JSON.parse(req.body);
+    var body = JSON.parse(req.body);
 
     //console.log("webhook next luas data:" + body.result.action);
+    // var stat = "milltown";
 
-    let text = {
-        "text": "Payment complete!"
-    }
-
-    let image = {
-        "attachment": {
-            "type": "image",
-            "payload": {
-                "url": "https://esbbot.prototypon.io/receipt.png"
-            }
-        }
-    }
-
-    let quickreplys = {
-        "text": "Would you like to set a savings goal?",
-        "quick_replies": [{
-            "content_type": "text",
-            "title": "Set Savings Goal",
-            "payload": "DAILY"
-        }]
-    }
-
-    getNextLuas().then(body => {
+    getNextLuas(body.result.parameters.station).then(body => {
         //console.log(body);
         parseString(body, function (err, result) {
             let text = {
@@ -292,8 +271,12 @@ app.post('/nextluas', (req, res) => {
     });
 });
 
-function getNextLuas() {
-    return fetch('http://luasforecasts.rpa.ie/xml/get.ashx?action=forecast&stop=har&encrypt=false')
+function getNextLuas(station) {
+    var stations = [['harcourt st', "har"],['st stephens green', "sts"],['milltown', "mil"],['beechwood', "bee"],['cowper', "cow"]];
+    var myMap = new Map(stations);
+
+    var sta = myMap.get(station);
+    return fetch('http://luasforecasts.rpa.ie/xml/get.ashx?action=forecast&stop=' + sta + '&encrypt=false')
         .then(function (res) {
             return res.text();
         });
