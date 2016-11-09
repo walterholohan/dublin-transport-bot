@@ -7,15 +7,16 @@ const uuid = require('node-uuid');
 const request = require('request');
 const JSONbig = require('json-bigint');
 const async = require('async');
-const fetch = require ('node-fetch');
+const fetch = require('node-fetch');
+const parseString = require('xml2js').parseString;
 
 const REST_PORT = (process.env.PORT || 5000);
-const APIAI_ACCESS_TOKEN = process.env.APIAI_ACCESS_TOKEN;
+const APIAI_ACCESS_TOKEN = process.env.APIAI_ACCESS_TOKEN || "0693bcbb533c469880dbd6dcc4e351ca";
 const APIAI_LANG = process.env.APIAI_LANG || 'en';
-const FB_VERIFY_TOKEN = process.env.FB_VERIFY_TOKEN;
-const FB_PAGE_ACCESS_TOKEN = process.env.FB_PAGE_ACCESS_TOKEN;
+const FB_VERIFY_TOKEN = process.env.FB_VERIFY_TOKEN || "150291";
+const FB_PAGE_ACCESS_TOKEN = process.env.FB_PAGE_ACCESS_TOKEN || "EAAEsTNpwyxYBAPGZBZB6s0fwAAjav598SvZBoyxZCrfSaf79F4jtUnxfNZBIEDmB9guPClluqoac5QR5rUeWMnVAfM7isRyBoySQsXQckS01ZCTecT3e4WeDRr2e7nccoXoP6JRSZB11qGX6vLD7cCItz5V87Brc8LJKxX0oxyOjAZDZD";
 
-const apiAiService = apiai(APIAI_ACCESS_TOKEN, { language: APIAI_LANG, requestSource: "fb" });
+const apiAiService = apiai(APIAI_ACCESS_TOKEN, {language: APIAI_LANG, requestSource: "fb"});
 const sessionIds = new Map();
 
 function processEvent(event) {
@@ -48,7 +49,7 @@ function processEvent(event) {
                             console.log('Response as formatted message');
                             sendFBMessage(sender, responseData.facebook);
                         } catch (err) {
-                            sendFBMessage(sender, { text: err.message });
+                            sendFBMessage(sender, {text: err.message});
                         }
                     } else {
                         async.eachSeries(responseData.facebook, (facebookMessage, callback) => {
@@ -61,7 +62,7 @@ function processEvent(event) {
                                     sendFBMessage(sender, facebookMessage, callback);
                                 }
                             } catch (err) {
-                                sendFBMessage(sender, { text: err.message });
+                                sendFBMessage(sender, {text: err.message});
                             }
                         });
                     }
@@ -72,7 +73,7 @@ function processEvent(event) {
                     var splittedText = splitResponse(responseText);
 
                     async.eachSeries(splittedText, (textPart, callback) => {
-                        sendFBMessage(sender, { text: textPart }, callback);
+                        sendFBMessage(sender, {text: textPart}, callback);
                     });
                 }
 
@@ -123,10 +124,10 @@ function chunkString(s, len) {
 function sendFBMessage(sender, messageData, callback) {
     request({
         url: 'https://graph.facebook.com/v2.6/me/messages',
-        qs: { access_token: FB_PAGE_ACCESS_TOKEN },
+        qs: {access_token: FB_PAGE_ACCESS_TOKEN},
         method: 'POST',
         json: {
-            recipient: { id: sender },
+            recipient: {id: sender},
             message: messageData
         }
     }, (error, response, body) => {
@@ -146,10 +147,10 @@ function sendFBSenderAction(sender, action, callback) {
     setTimeout(() => {
         request({
             url: 'https://graph.facebook.com/v2.6/me/messages',
-            qs: { access_token: FB_PAGE_ACCESS_TOKEN },
+            qs: {access_token: FB_PAGE_ACCESS_TOKEN},
             method: 'POST',
             json: {
-                recipient: { id: sender },
+                recipient: {id: sender},
                 sender_action: action
             }
         }, (error, response, body) => {
@@ -193,8 +194,8 @@ function isDefined(obj) {
 
 const app = express();
 
-app.use(bodyParser.text({ type: 'application/json' }));
-app.use(function(req, res, next) {
+app.use(bodyParser.text({type: 'application/json'}));
+app.use(function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     next();
@@ -247,9 +248,9 @@ app.post('/webhook/', (req, res) => {
 });
 
 app.post('/nextluas', (req, res) => {
-    var body = JSON.parse(req.body);
+    //var body = JSON.parse(req.body);
 
-    console.log("webhook next luas data:" + body.result.action);
+    //console.log("webhook next luas data:" + body.result.action);
 
     let text = {
         "text": "Payment complete!"
@@ -274,18 +275,25 @@ app.post('/nextluas', (req, res) => {
     }
 
     getNextLuas().then(body => {
-        console.log(body);
-        return res.json({
-            speech: 'Hook is working!',
-            displayText: 'Hook is working!',
-            data: { "facebook": text}
+        //console.log(body);
+        parseString(body, function (err, result) {
+            let text = {
+                "text": result.stopInfo.direction[0].tram[0].$.dueMins + "mins, Direction: " +
+                result.stopInfo.direction[0].tram[0].$.destination
+            }
+            return res.json({
+                speech: 'Hook is working!',
+                displayText: 'Hook is working!',
+                data: {"facebook": text}
+            });
         });
+
     });
 });
 
 function getNextLuas() {
     return fetch('http://luasforecasts.rpa.ie/xml/get.ashx?action=forecast&stop=ran&encrypt=false')
-        .then(function(res) {
+        .then(function (res) {
             return res.text();
         });
 }
