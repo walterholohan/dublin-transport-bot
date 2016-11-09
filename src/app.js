@@ -292,7 +292,7 @@ app.post('/nextluas', (req, res) => {
 });
 
 function getNextLuas() {
-    return fetch('http://luasforecasts.rpa.ie/xml/get.ashx?action=forecast&stop=ran&encrypt=false')
+    return fetch('http://luasforecasts.rpa.ie/xml/get.ashx?action=forecast&stop=har&encrypt=false')
         .then(function (res) {
             return res.text();
         });
