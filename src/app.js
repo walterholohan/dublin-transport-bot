@@ -259,8 +259,11 @@ app.post('/nextluas', (req, res) => {
             let outboundTime = outbound.$.dueMins == 'DUE' ? outbound.$.dueMins : outbound.$.dueMins + 'mins';
             let outboundDest = outbound.$.destination;
 
+            let inboundText = inbound.$.dueMins ? (inboundTime + " Direction: " + inboundDest + "\r\n") : "";
+            let outboundText = outbound.$.dueMins ? (outboundTime + " Direction: " + outboundDest) : "";
+
             let text = {
-                "text": inbound.$.dueMins ? (inboundTime + " Direction: " + inboundDest) : "" + "\r\n" + outbound.$.dueMins ? (outboundTime + " Direction: " + outboundDest) : ""
+                "text": inboundText + outboundText
             };
             return res.json({
                 speech: 'Hook is working!',
