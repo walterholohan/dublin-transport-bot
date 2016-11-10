@@ -254,7 +254,6 @@ app.post('/nextluas', (req, res) => {
     // var stat = "milltown";
 
     getNextLuas(body.result.parameters.station).then(body => {
-        //console.log(body);
         parseString(body, function (err, result) {
             let text = {
                 "text": result.stopInfo.direction[0].tram[0].$.dueMins + "mins, Direction: " +
@@ -272,11 +271,7 @@ app.post('/nextluas', (req, res) => {
 });
 
 function getNextLuas(station) {
-    var stations = [['harcourt st', "har"],['st stephens green', "sts"],['milltown', "mil"],['beechwood', "bee"],['cowper', "cow"]];
-    var myMap = new Map(stations);
-
-    var sta = myMap.get(station);
-    return fetch('http://luasforecasts.rpa.ie/xml/get.ashx?action=forecast&stop=' + sta + '&encrypt=false')
+    return fetch('http://luasforecasts.rpa.ie/xml/get.ashx?action=forecast&stop=' + station + '&encrypt=false')
         .then(function (res) {
             return res.text();
         });
