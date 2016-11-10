@@ -260,8 +260,8 @@ app.post('/nextluas', (req, res) => {
             let outboundDest = outbound.$.destination;
 
             let text = {
-                "text": inboundTime + " Direction: " + inboundDest + "\r\n" + outboundTime + " Direction: " + outboundDest
-            }
+                "text": inbound ? (inboundTime + " Direction: " + inboundDest) : "" + "\r\n" + outbound ? (outboundTime + " Direction: " + outboundDest) : ""
+            };
             return res.json({
                 speech: 'Hook is working!',
                 displayText: 'Hook is working!',
