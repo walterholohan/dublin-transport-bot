@@ -262,12 +262,22 @@ app.post('/nextluas', (req, res) => {
             let inboundText = inbound.$.dueMins ? (inboundTime + " Direction: " + inboundDest + "\r\n") : "";
             let outboundText = outbound.$.dueMins ? (outboundTime + " Direction: " + outboundDest) : "";
 
-            let text = {
-                "text": inboundText + outboundText
-            };
+            let text = {};
+
+            if (!inboundText && !outboundText) {
+                text = {
+                    "text": "No trams forecast, try again in a few minutes"
+                };
+            } else {
+                text = {
+                    "text": inboundText + outboundText
+                };
+            }
+
+
             return res.json({
-                speech: 'Hook is working!',
-                displayText: 'Hook is working!',
+                speech: 'Get Next Luas',
+                displayText: 'Get Next Luas',
                 data: {"facebook": text}
             });
         });
