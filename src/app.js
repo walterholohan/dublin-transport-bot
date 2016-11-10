@@ -250,15 +250,17 @@ app.post('/webhook/', (req, res) => {
 app.post('/nextluas', (req, res) => {
     var body = JSON.parse(req.body);
 
-    //console.log("webhook next luas data:" + body.result.action);
-    // var stat = "milltown";
-
     getNextLuas(body.result.parameters.station).then(body => {
         parseString(body, function (err, result) {
+            let inbound = result.stopInfo.direction[0].tram[0];
+            let outbound = result.stopInfo.direction[1].tram[0];
+            let inboundTime = inbound.$.dueMins == 'DUE' ? inbound.$.dueMins : inbound.$.dueMins + 'mins';
+            let inboundDest = inbound.$.destination;
+            let outboundTime = outbound.$.dueMins == 'DUE' ? outbound.$.dueMins : outbound.$.dueMins + 'mins';
+            let outboundDest = outbound.$.destination;
+
             let text = {
-                "text": result.stopInfo.direction[0].tram[0].$.dueMins + "mins, Direction: " +
-                result.stopInfo.direction[0].tram[0].$.destination + "\r\n" + result.stopInfo.direction[1].tram[0].$.dueMins + "mins, Direction: " +
-                result.stopInfo.direction[1].tram[0].$.destination
+                "text": inboundTime + " Direction: " + inboundDest + "\r\n" + outboundTime + " Direction: " + outboundDest
             }
             return res.json({
                 speech: 'Hook is working!',
