@@ -20,13 +20,16 @@ const apiAiService = apiai(APIAI_ACCESS_TOKEN, {language: APIAI_LANG, requestSou
 const sessionIds = new Map();
 
 function processEvent(event) {
-    console.log(event);
     var sender = event.sender.id.toString();
 
-    if ((event.message && event.message.text) || (event.postback && event.postback.payload)) {
+    if ((event.message && event.message.text) || (event.postback && event.postback.payload) ||(event.message && event.message.attachments)) {
         var text = event.message ? event.message.text : event.postback.payload;
         // Handle a text message from this sender
 
+        if (event.message.attachments[0].payload.coordinates) {
+            console.log("lat", event.message.attachments[0].payload.coordinates.lat);
+            console.log("long", event.message.attachments[0].payload.coordinates.long);
+        }
         if (!sessionIds.has(sender)) {
             sessionIds.set(sender, uuid.v1());
         }
