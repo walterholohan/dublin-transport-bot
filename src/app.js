@@ -8,6 +8,7 @@ const request = require('request');
 const JSONbig = require('json-bigint');
 const async = require('async');
 const fetch = require('node-fetch');
+const flat = require('flat');
 const parseString = require('xml2js').parseString;
 
 const REST_PORT = (process.env.PORT || 5000);
@@ -21,16 +22,17 @@ const sessionIds = new Map();
 
 function processEvent(event) {
     var sender = event.sender.id.toString();
+    console.log(flat(event));
 
     if ((event.message && event.message.text) || (event.postback && event.postback.payload) ||(event.message && event.message.attachments)) {
         var text = event.message ? event.message.text : event.postback.payload;
         // Handle a text message from this sender
 
-        if (event.message.attachments && event.message.attachments[0].payload.coordinates) {
-            console.log("attach", event.message.attachments[0].payload.coordinates);
-            console.log("lat", event.message.attachments[0].payload.coordinates.lat);
-            console.log("long", event.message.attachments[0].payload.coordinates.long['String']);
-        }
+        // if (event.message.attachments && event.message.attachments[0].payload.coordinates) {
+        //     console.log("attach", event.message.attachments[0].payload.coordinates);
+        //     console.log("lat", event.message.attachments[0].payload.coordinates.lat);
+        //     console.log("long", event.message.attachments[0].payload.coordinates.long['String']);
+        // }
         if (!sessionIds.has(sender)) {
             sessionIds.set(sender, uuid.v1());
         }
