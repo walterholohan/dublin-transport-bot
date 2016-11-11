@@ -26,9 +26,10 @@ function processEvent(event) {
         var text = event.message ? event.message.text : event.postback.payload;
         // Handle a text message from this sender
 
-        if (event.message.attachments[0].payload.coordinates) {
+        if (event.message.attachments && event.message.attachments[0].payload.coordinates) {
+            console.log("attach", event.message.attachments[0].payload.coordinates);
             console.log("lat", event.message.attachments[0].payload.coordinates.lat);
-            console.log("long", event.message.attachments[0].payload.coordinates.long);
+            console.log("long", event.message.attachments[0].payload.coordinates.long['String']);
         }
         if (!sessionIds.has(sender)) {
             sessionIds.set(sender, uuid.v1());
